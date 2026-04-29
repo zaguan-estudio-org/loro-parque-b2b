@@ -1,0 +1,98 @@
+/* ============================================================
+   Design System — Bahía del Duque · Portal B2B
+   Tokens extraídos del design system Pencil
+   ============================================================ */
+
+:root {
+  /* === PALETA DORADO (Pantone 871) === */
+  --gold-100:    #807451;
+  --gold-80:     #999174;
+  --gold-60:     #bfbaa8;
+  --gold-accent: #a08f6b;
+  --gold-light:  #cab684;
+
+  /* === PALETA WARM GRAY === */
+  --gray-900: #212121;
+  --gray-800: #333333;
+  --gray-700: #3b3b3b;
+  --gray-600: #555555;
+  --gray-500: #676666;
+  --gray-400: #848484;
+  --gray-300: #8b8683;
+  --gray-200: #9c9c9c;
+  --gray-150: #bfbaa8;
+  --gray-100: #d1d0cc;
+  --gray-50:  #eaeae5;
+  --gray-25:  #f9f8f6;
+  --white:    #ffffff;
+
+  /* === SEMÁNTICOS === */
+  --color-success:    #2d7a45;
+  --color-success-fg: #ffffff;
+  --color-warning:    #cab684;
+  --color-warning-fg: #3b3b3b;
+  --color-error:      #c0392b;
+  --color-error-fg:   #ffffff;
+
+  /* === ROLES SEMÁNTICOS === */
+  --background:         var(--gray-25);
+  --foreground:         var(--gray-700);
+  --muted-foreground:   var(--gray-400);
+  --card:               var(--white);
+  --border:             var(--gray-100);
+  --border-subtle:      var(--gray-50);
+  --primary:            var(--gold-100);
+  --primary-fg:         var(--white);
+  --accent:             var(--gold-accent);
+  --accent-light:       var(--gold-light);
+  --surface-warm:       var(--gray-50);
+
+  /* === SIDEBAR === */
+  --sidebar-bg:        var(--gray-700);
+  --sidebar-fg:        var(--gray-100);
+  --sidebar-active-bg: var(--gold-100);
+  --sidebar-active-fg: var(--white);
+  --sidebar-hover-bg:  var(--gray-600);
+
+  /* === TIPOGRAFÍA === */
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body:    'Inter', system-ui, sans-serif;
+
+  --text-xs:   9px;
+  --text-sm:   11px;
+  --text-base: 13px;
+  --text-md:   14px;
+  --text-lg:   16px;
+  --text-xl:   20px;
+  --text-2xl:  24px;
+  --text-3xl:  28px;
+  --text-4xl:  36px;
+
+  /* === SPACING === */
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  20px;
+  --space-6:  24px;
+  --space-8:  32px;
+  --space-10: 40px;
+  --space-12: 48px;
+
+  /* === RADIOS === */
+  --radius-none: 0px;
+  --radius-sm:   3px;
+  --radius-md:   6px;
+
+  /* === SIDEBAR WIDTH === */
+  --sidebar-width: 240px;
+
+  /* === SOMBRAS === */
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.10);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.14);
+
+  /* === TRANSICIONES === */
+  --transition-fast: 150ms ease;
+  --transition-base: 250ms ease;
+}
