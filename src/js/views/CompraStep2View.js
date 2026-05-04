@@ -29,6 +29,7 @@ export class CompraStep2View {
   #onConfirmar;
   #onVolver;
   #cart;
+  #clienteDatos = { nombre: '', email: '', enviarPorEmail: false };
 
   constructor({ onConfirmar, onVolver }) {
     this.#onConfirmar = onConfirmar;
@@ -62,7 +63,7 @@ export class CompraStep2View {
       <div class="page-header" style="margin-top:8px">
         <div>
           <h2 class="page-header__title">Revisar pedido</h2>
-          <p class="page-header__subtitle">Confirma los datos antes de emitir la reserva</p>
+          <p class="page-header__subtitle">Confirma los datos antes de emitir el ticket</p>
         </div>
         <button class="btn btn--ghost js-volver">${Icons.arrowLeft} Modificar selección</button>
       </div>
@@ -85,26 +86,23 @@ export class CompraStep2View {
 
           <div class="card">
             <div class="card__header">
-              <div class="card__title">Datos de la agencia</div>
+              <div class="card__title">Datos del cliente</div>
+              <div class="card__subtitle">Información del viajero o responsable de la compra</div>
             </div>
             <div class="card__body">
-              <div class="detalle-fields-grid" style="gap:16px">
-                <div class="detalle-field">
-                  <span class="detalle-field__label">Agencia</span>
-                  <span class="detalle-field__value">Agencia Operadora</span>
+              <div style="display:flex;flex-direction:column;gap:16px">
+                <div class="field">
+                  <label class="field__label" for="cliente-nombre">NOMBRE <span style="color:var(--color-error)">*</span></label>
+                  <input class="field__input js-nombre" id="cliente-nombre" type="text" placeholder="Nombre completo del cliente" autocomplete="name" value="${this.#clienteDatos.nombre}">
                 </div>
-                <div class="detalle-field">
-                  <span class="detalle-field__label">Email</span>
-                  <span class="detalle-field__value">agencia@bahiaduque.com</span>
+                <div class="field">
+                  <label class="field__label" for="cliente-email">EMAIL <span style="color:var(--color-error)">*</span></label>
+                  <input class="field__input js-email" id="cliente-email" type="email" placeholder="email@ejemplo.com" autocomplete="email" value="${this.#clienteDatos.email}">
                 </div>
-                <div class="detalle-field">
-                  <span class="detalle-field__label">Forma de pago</span>
-                  <span class="detalle-field__value">Diferido (DP) · Liquidación mensual</span>
-                </div>
-                <div class="detalle-field">
-                  <span class="detalle-field__label">Parque</span>
-                  <span class="detalle-field__value">${parque.nombre}</span>
-                </div>
+                <label style="display:flex;align-items:center;gap:10px;cursor:pointer;padding:12px;border:1px solid var(--border);background:var(--surface-warm)">
+                  <input type="checkbox" class="js-enviar-email" ${this.#clienteDatos.enviarPorEmail ? 'checked' : ''} style="width:16px;height:16px;accent-color:var(--primary);cursor:pointer;flex-shrink:0">
+                  <span style="font-size:13px;color:var(--foreground)">Enviar entradas por email al cliente</span>
+                </label>
               </div>
             </div>
           </div>
@@ -157,9 +155,36 @@ export class CompraStep2View {
     this.#el.querySelectorAll('.js-volver').forEach(btn =>
       btn.addEventListener('click', () => this.#onVolver())
     );
-    this.#el.querySelector('.js-confirmar').addEventListener('click', () =>
-      this.#onConfirmar(this.#cart)
-    );
+
+    const inputNombre = this.#el.querySelector('.js-nombre');
+    const inputEmail  = this.#el.querySelector('.js-email');
+    const checkEmail  = this.#el.querySelector('.js-enviar-email');
+
+    inputNombre.addEventListener('input', () => { this.#clienteDatos.nombre = inputNombre.value.trim(); });
+    inputEmail.addEventListener('input',  () => { this.#clienteDatos.email  = inputEmail.value.trim(); });
+    checkEmail.addEventListener('change', () => { this.#clienteDatos.enviarPorEmail = checkEmail.checked; });
+
+    this.#el.querySelector('.js-confirmar').addEventListener('click', () => {
+      const nombre = inputNombre.value.trim();
+      const email  = inputEmail.value.trim();
+
+      if (!nombre) {
+        inputNombre.focus();
+        inputNombre.style.borderColor = 'var(--color-error)';
+        return;
+      }
+      inputNombre.style.borderColor = '';
+
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        inputEmail.focus();
+        inputEmail.style.borderColor = 'var(--color-error)';
+        return;
+      }
+      inputEmail.style.borderColor = '';
+
+      this.#clienteDatos = { nombre, email, enviarPorEmail: checkEmail.checked };
+      this.#onConfirmar(this.#cart, this.#clienteDatos);
+    });
   }
 
   getElement() { return this.#el; }

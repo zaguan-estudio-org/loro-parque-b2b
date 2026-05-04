@@ -56,8 +56,8 @@ export class ReservasView {
     return `
       <div class="page-header">
         <div>
-          <h2 class="page-header__title">Reservas</h2>
-          <p class="page-header__subtitle">Histórico de reservas realizadas por la agencia</p>
+          <h2 class="page-header__title">Tickets</h2>
+          <p class="page-header__subtitle">Histórico de tickets emitidos por la agencia</p>
         </div>
         <div class="page-header__actions">
           <button class="btn btn--secondary">
@@ -70,7 +70,7 @@ export class ReservasView {
       <div class="table-wrapper">
         <div class="table-toolbar">
           <div class="table-toolbar__left">
-            <span class="table-toolbar__title">Últimas reservas</span>
+            <span class="table-toolbar__title">Últimas ventas</span>
           </div>
           <div class="table-toolbar__right" style="flex-wrap:wrap; gap:12px;">
             <div class="search-bar">
@@ -94,7 +94,7 @@ export class ReservasView {
             </tr>
           </thead>
           <tbody class="js-tbody">
-            <tr><td colspan="7" style="text-align:center;padding:32px;color:var(--muted-foreground)">Cargando reservas...</td></tr>
+            <tr><td colspan="7" style="text-align:center;padding:32px;color:var(--muted-foreground)">Cargando tickets...</td></tr>
           </tbody>
         </table>
       </div>
@@ -155,7 +155,7 @@ export class ReservasView {
     const rows = this.#filtered();
 
     if (rows.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:32px;color:var(--muted-foreground)">No se encontraron reservas</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:32px;color:var(--muted-foreground)">No se encontraron tickets</td></tr>`;
       return;
     }
 

@@ -42,7 +42,7 @@ export class CompraStep3View {
   }
 
   #render() {
-    const { localizador, pedido, fecha, productos, importeTotal } = this.#purchase;
+    const { localizador, pedido, fecha, productos, importeTotal, clienteDatos } = this.#purchase;
     const totalEntradas = productos.reduce((acc, p) => acc + p.cantidad, 0);
 
     const lineas = productos.map(p => `
@@ -61,15 +61,15 @@ export class CompraStep3View {
             ${Icons.check}
           </div>
           <div>
-            <h2 style="font-family:var(--font-display);font-size:28px;color:var(--foreground)">Reserva emitida</h2>
-            <p style="font-size:13px;color:var(--muted-foreground);margin-top:4px">La reserva se ha procesado correctamente</p>
+            <h2 style="font-family:var(--font-display);font-size:28px;color:var(--foreground)">Ticket emitido</h2>
+            <p style="font-size:13px;color:var(--muted-foreground);margin-top:4px">El ticket se ha procesado correctamente</p>
           </div>
         </div>
 
         <div class="card">
           <div class="card__body">
             <div class="localizador-box">
-              <div class="localizador-box__label">Localizador de reserva</div>
+              <div class="localizador-box__label">Localizador del ticket</div>
               <div class="localizador-box__code">${localizador}</div>
               <div class="barcode js-barcode"></div>
             </div>
@@ -78,7 +78,7 @@ export class CompraStep3View {
 
         <div class="card">
           <div class="card__header">
-            <div class="card__title">Detalle de la reserva</div>
+            <div class="card__title">Detalle del ticket</div>
           </div>
           <div class="card__body">
             <div class="detalle-fields-grid" style="margin-bottom:20px">
@@ -116,21 +116,48 @@ export class CompraStep3View {
           </div>
         </div>
 
+        ${clienteDatos ? `
+        <div class="card">
+          <div class="card__header">
+            <div class="card__title">Datos del cliente</div>
+          </div>
+          <div class="card__body">
+            <div class="detalle-fields-grid">
+              <div class="detalle-field">
+                <span class="detalle-field__label">Nombre</span>
+                <span class="detalle-field__value">${clienteDatos.nombre}</span>
+              </div>
+              <div class="detalle-field">
+                <span class="detalle-field__label">Email</span>
+                <span class="detalle-field__value">${clienteDatos.email}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        ` : ''}
+
+        ${clienteDatos?.enviarPorEmail ? `
+        <div class="alert alert--info">
+          ${Icons.bell}
+          <div>Las entradas serán enviadas por email a <strong>${clienteDatos.email}</strong>.</div>
+        </div>
+        ` : ''}
+
         <div class="alert alert--success">
           ${Icons.check}
           <div>
-            <strong>Estado: Activa.</strong> La reserva aparece ahora en el listado de reservas y puede consultarse en cualquier momento por el localizador <strong>${localizador}</strong>.
+            <strong>Estado: Activa.</strong> El ticket aparece ahora en el listado de tickets y puede consultarse en cualquier momento por el localizador <strong>${localizador}</strong>.
           </div>
         </div>
 
         <div style="display:flex;gap:12px;justify-content:flex-end">
           <button class="btn btn--secondary js-nueva-reserva">
             ${Icons.plus}
-            Nueva Reserva
+            Nueva Venta
           </button>
           <button class="btn btn--primary js-ver-reservas">
             ${Icons.reservas}
-            Ver todas las reservas
+            Ver todos los tickets
           </button>
         </div>
       </div>

@@ -6,8 +6,8 @@ import { Icons } from '../utils/icons.js';
 
 const NAV_ITEMS = [
   { id: 'dashboard',    label: 'Dashboard',      icon: Icons.dashboard },
-  { id: 'reservas',     label: 'Reservas',        icon: Icons.reservas },
-  { id: 'nuevaReserva', label: 'Nueva Reserva',   icon: Icons.nuevaReserva },
+  { id: 'reservas',     label: 'Tickets',          icon: Icons.reservas },
+  { id: 'nuevaReserva', label: 'Nueva Venta',     icon: Icons.nuevaReserva },
 ];
 
 export class PanelShell {
@@ -34,17 +34,22 @@ export class PanelShell {
     return `
       <aside class="sidebar">
         <div class="sidebar__header">
-          <div class="sidebar__logo">BAHÍA DEL DUQUE</div>
-          <div class="sidebar__tagline">Portal B2B · Gestión</div>
+          <div class="sidebar__header-text">
+            <div class="sidebar__logo">BAHÍA DEL DUQUE</div>
+            <div class="sidebar__tagline">Portal B2B · Gestión</div>
+          </div>
+          <button class="sidebar__toggle js-sidebar-toggle" aria-label="Colapsar menú">
+            ${Icons.arrowLeft}
+          </button>
         </div>
         <nav class="sidebar__nav" aria-label="Navegación principal">
           ${navItems}
         </nav>
         <div class="sidebar__footer">
-          <div class="sidebar__avatar">AG</div>
-          <div>
-            <div class="sidebar__user-name">Agencia Operadora</div>
-            <div class="sidebar__user-role">Operador B2B</div>
+          <div class="sidebar__avatar">MS</div>
+          <div class="sidebar__user-info">
+            <div class="sidebar__user-name">María Suárez</div>
+            <div class="sidebar__user-role">Dpto. Recepción</div>
           </div>
         </div>
       </aside>
@@ -56,7 +61,7 @@ export class PanelShell {
             <button class="topbar__icon-btn" aria-label="Notificaciones">
               ${Icons.bell}
             </button>
-            <div class="topbar__avatar" title="Agencia Operadora">AG</div>
+            <div class="topbar__avatar" title="María Suárez">MS</div>
           </div>
         </header>
         <main id="panel-content" class="page-content"></main>
@@ -69,6 +74,10 @@ export class PanelShell {
       btn.addEventListener('click', () => {
         this.#onNavClick(btn.dataset.view);
       });
+    });
+
+    this.#el.querySelector('.js-sidebar-toggle').addEventListener('click', () => {
+      this.#el.querySelector('.sidebar').classList.toggle('sidebar--collapsed');
     });
   }
 

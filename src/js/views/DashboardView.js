@@ -47,24 +47,24 @@ export class DashboardView {
     return `
       <div class="page-header">
         <div>
-          <h2 class="page-header__title">Gestión de Reservas</h2>
+          <h2 class="page-header__title">Venta de Tickets</h2>
           <p class="page-header__subtitle">Portal B2B · Entradas Loro Parque &amp; Siam Park</p>
         </div>
         <div class="page-header__actions">
           <button class="btn btn--secondary js-ver-reservas-btn">
             ${Icons.reservas}
-            Ver reservas
+            Ver tickets
           </button>
           <button class="btn btn--primary js-nueva-reserva-btn">
             ${Icons.plus}
-            Nueva Reserva
+            Nueva Venta
           </button>
         </div>
       </div>
 
       <div class="kpi-grid">
         <div class="kpi-card">
-          <div class="kpi-card__label">Reservas este mes</div>
+          <div class="kpi-card__label">Tickets este mes</div>
           <div class="kpi-card__value">249</div>
           <div class="kpi-card__sub kpi-card__sub--positive">+12% vs mes anterior</div>
         </div>
@@ -88,7 +88,7 @@ export class DashboardView {
       <div class="table-wrapper">
         <div class="table-toolbar">
           <div class="table-toolbar__left">
-            <span class="table-toolbar__title">Últimas reservas</span>
+            <span class="table-toolbar__title">Últimas ventas</span>
           </div>
           <div class="table-toolbar__right">
             <button class="btn btn--ghost js-ver-reservas-btn">Ver todas ${Icons.arrowRight}</button>

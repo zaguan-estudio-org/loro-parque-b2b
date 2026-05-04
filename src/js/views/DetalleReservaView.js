@@ -49,14 +49,14 @@ export class DetalleReservaView {
           </button>
           <div>
             <h2 class="page-header__title">${r.localizador}</h2>
-            <p class="page-header__subtitle">Detalle de reserva</p>
+            <p class="page-header__subtitle">Detalle del ticket</p>
           </div>
         </div>
         <div class="page-header__actions">
           ${canAnular ? `
             <button class="btn btn--danger js-anular">
               ${Icons.x}
-              Anular reserva
+              Anular ticket
             </button>
           ` : ''}
         </div>
@@ -66,7 +66,7 @@ export class DetalleReservaView {
         <div style="display:flex;flex-direction:column;gap:20px">
           <div class="card">
             <div class="card__header">
-              <div class="card__title">Información de la reserva</div>
+              <div class="card__title">Información del ticket</div>
             </div>
             <div class="card__body">
               <div class="detalle-fields-grid">
@@ -109,7 +109,7 @@ export class DetalleReservaView {
               </div>
               ${productos}
               <div class="summary-row summary-row--total">
-                <span class="summary-row__label">Total reserva</span>
+                <span class="summary-row__label">Total ticket</span>
                 <span class="summary-row__value">${Formatters.currency(r.importeTotal)}</span>
               </div>
             </div>
@@ -119,7 +119,7 @@ export class DetalleReservaView {
         <div style="display:flex;flex-direction:column;gap:20px">
           <div class="card">
             <div class="card__header">
-              <div class="card__title">Código de reserva</div>
+              <div class="card__title">Código del ticket</div>
             </div>
             <div class="card__body">
               <div class="localizador-box">
@@ -142,7 +142,7 @@ export class DetalleReservaView {
               </p>
               <button class="btn btn--danger btn--full js-anular">
                 ${Icons.x}
-                Anular esta reserva
+                Anular este ticket
               </button>
             </div>
           </div>

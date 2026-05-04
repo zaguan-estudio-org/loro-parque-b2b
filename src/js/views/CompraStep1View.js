@@ -5,6 +5,11 @@
 import { Icons } from '../utils/icons.js';
 import { Formatters } from '../utils/formatters.js';
 
+const MONTH_NAMES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio',
+                     'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+
+const WEEK_DAYS = ['Lu','Ma','Mi','Ju','Vi','Sa','Do'];
+
 const STEP_INDICATOR = `
   <div class="steps">
     <div class="step step--active">
@@ -34,50 +39,68 @@ export class CompraStep1View {
   #productos = [];
   #cantidades = {};
   #fecha = Formatters.tomorrowISO();
+  #calYear;
+  #calMonth;
 
   constructor({ api, spinner, parque, onSiguiente, onVolver }) {
-    this.#api      = api;
-    this.#spinner  = spinner;
-    this.#parque   = parque;
+    this.#api         = api;
+    this.#spinner     = spinner;
+    this.#parque      = parque;
     this.#onSiguiente = onSiguiente;
     this.#onVolver    = onVolver;
+
+    const d = new Date(this.#fecha + 'T00:00:00');
+    this.#calYear  = d.getFullYear();
+    this.#calMonth = d.getMonth();
+
     this.#el = document.createElement('div');
     this.#el.innerHTML = this.#skeleton();
+    this.#renderCalendar();
     this.#bindStaticEvents();
     this.#loadProductos();
   }
 
   #skeleton() {
+    const weekdaysHtml = WEEK_DAYS.map(d =>
+      `<span class="cal__weekday">${d}</span>`
+    ).join('');
+
     return `
       ${STEP_INDICATOR}
 
       <div class="page-header" style="margin-top:8px">
         <div>
-          <h2 class="page-header__title">Nueva Reserva — ${this.#parque.nombre}</h2>
+          <h2 class="page-header__title">Nueva Venta — ${this.#parque.nombre}</h2>
           <p class="page-header__subtitle">Selecciona la fecha de visita y el número de entradas</p>
         </div>
         <button class="btn btn--ghost js-volver">${Icons.arrowLeft} Volver</button>
       </div>
 
-      <div class="card" style="padding:20px">
-        <div style="display:flex;align-items:center;gap:16px">
-          <label style="font-size:13px;font-weight:600;color:var(--foreground)">Fecha de visita</label>
-          <div class="date-input-wrap">
-            ${Icons.calendar}
-            <input type="date" class="js-fecha" value="${this.#fecha}" min="${Formatters.tomorrowISO()}" />
-          </div>
-          <span class="js-fecha-status" style="font-size:12px;color:var(--muted-foreground)"></span>
-        </div>
-      </div>
-
       <div class="compra-layout">
-        <div>
+        <div style="display:flex;flex-direction:column;gap:var(--space-5)">
+
+          <div class="cal">
+            <div class="cal__header">
+              <button class="cal__nav js-cal-prev" aria-label="Mes anterior">
+                ${Icons.arrowLeft}
+              </button>
+              <span class="cal__month-label js-cal-label"></span>
+              <button class="cal__nav js-cal-next" aria-label="Mes siguiente">
+                ${Icons.arrowRight}
+              </button>
+            </div>
+            <div class="cal__weekdays">${weekdaysHtml}</div>
+            <div class="cal__grid js-cal-grid"></div>
+            <div class="cal__status js-fecha-status"></div>
+          </div>
+
           <div class="compra-products js-products">
             <div style="text-align:center;padding:40px;color:var(--muted-foreground)">
               Consultando disponibilidad...
             </div>
           </div>
         </div>
+
         <div>
           <div class="compra-sidebar-card">
             <div class="compra-sidebar-card__header">
@@ -101,40 +124,137 @@ export class CompraStep1View {
     `;
   }
 
+  #renderCalendar() {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    const year  = this.#calYear;
+    const month = this.#calMonth;
+
+    const firstOfMonth = new Date(year, month, 1);
+    const lastOfMonth  = new Date(year, month + 1, 0);
+
+    // Monday-based offset (getDay: 0=Sun → put at end)
+    let startOffset = firstOfMonth.getDay();
+    startOffset = startOffset === 0 ? 6 : startOffset - 1;
+
+    const selectedDate = new Date(this.#fecha + 'T00:00:00');
+
+    // Label
+    const label = this.#el.querySelector('.js-cal-label');
+    if (label) label.textContent = `${MONTH_NAMES[month]} ${year}`;
+
+    // Prev button — disable if already on current month
+    const prevBtn = this.#el.querySelector('.js-cal-prev');
+    if (prevBtn) {
+      const isCurrentMonth = year === today.getFullYear() && month === today.getMonth();
+      prevBtn.disabled = isCurrentMonth;
+    }
+
+    const grid = this.#el.querySelector('.js-cal-grid');
+    if (!grid) return;
+
+    let html = '';
+
+    // Leading days from previous month
+    for (let i = startOffset - 1; i >= 0; i--) {
+      const d = new Date(year, month, -i);
+      html += `<button class="cal__day cal__day--other-month" disabled>${d.getDate()}</button>`;
+    }
+
+    // Current month days
+    for (let d = 1; d <= lastOfMonth.getDate(); d++) {
+      const date = new Date(year, month, d);
+      const isDisabled   = date < tomorrow;
+      const isToday      = date.getTime() === today.getTime();
+      const isSelected   = date.getTime() === selectedDate.getTime();
+      const iso = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+
+      const classes = [
+        'cal__day',
+        isToday    ? 'cal__day--today'    : '',
+        isSelected ? 'cal__day--selected' : '',
+        isDisabled ? 'cal__day--disabled' : '',
+      ].filter(Boolean).join(' ');
+
+      html += `<button class="${classes}" data-date="${iso}" ${isDisabled ? 'disabled' : ''}>${d}</button>`;
+    }
+
+    // Trailing days from next month to complete last row
+    const totalCells   = startOffset + lastOfMonth.getDate();
+    const trailingDays = (7 - (totalCells % 7)) % 7;
+    for (let d = 1; d <= trailingDays; d++) {
+      html += `<button class="cal__day cal__day--other-month" disabled>${d}</button>`;
+    }
+
+    grid.innerHTML = html;
+
+    // Day click
+    grid.querySelectorAll('.cal__day:not([disabled])').forEach(btn => {
+      btn.addEventListener('click', () => {
+        this.#fecha = btn.dataset.date;
+        this.#renderCalendar();
+        this.#loadProductos();
+      });
+    });
+  }
+
   #bindStaticEvents() {
     this.#el.querySelector('.js-volver')?.addEventListener('click', () => this.#onVolver());
+
     this.#el.addEventListener('click', e => {
       if (e.target.classList.contains('js-siguiente') && !e.target.disabled) {
         this.#onSiguiente(this.#buildCart());
       }
     });
-    this.#el.querySelector('.js-fecha')?.addEventListener('change', e => {
-      this.#fecha = e.target.value;
-      this.#loadProductos();
+
+    this.#el.querySelector('.js-cal-prev')?.addEventListener('click', () => {
+      if (this.#calMonth === 0) { this.#calMonth = 11; this.#calYear--; }
+      else { this.#calMonth--; }
+      this.#renderCalendar();
+    });
+
+    this.#el.querySelector('.js-cal-next')?.addEventListener('click', () => {
+      if (this.#calMonth === 11) { this.#calMonth = 0; this.#calYear++; }
+      else { this.#calMonth++; }
+      this.#renderCalendar();
     });
   }
 
   async #loadProductos() {
-    const statusEl = this.#el.querySelector('.js-fecha-status');
+    const statusEl  = this.#el.querySelector('.js-fecha-status');
     const productsEl = this.#el.querySelector('.js-products');
     if (!productsEl) return;
 
-    if (statusEl) statusEl.textContent = 'Consultando disponibilidad...';
-    productsEl.innerHTML = `<div style="text-align:center;padding:40px;color:var(--muted-foreground)">
-      <div class="spinner" style="margin:0 auto 12px"></div>
-      Consultando disponibilidad...
-    </div>`;
+    if (statusEl) {
+      statusEl.className = 'cal__status';
+      statusEl.textContent = 'Consultando disponibilidad…';
+    }
+
+    productsEl.innerHTML = `
+      <div style="text-align:center;padding:40px;color:var(--muted-foreground)">
+        <div class="spinner" style="margin:0 auto 12px"></div>
+        Consultando disponibilidad...
+      </div>`;
 
     try {
       const result = await this.#api.hibDisponible(this.#fecha);
       this.#productos = result.productos;
-      // Limpia cantidades de productos que ya no existen (ADR-03)
       const ids = new Set(this.#productos.map(p => p.productoId));
       Object.keys(this.#cantidades).forEach(k => { if (!ids.has(k)) delete this.#cantidades[k]; });
-      if (statusEl) statusEl.textContent = '✓ Disponible';
+      if (statusEl) {
+        statusEl.className = 'cal__status cal__status--ok';
+        const d = new Date(this.#fecha + 'T00:00:00');
+        statusEl.textContent = `✓ Disponible · ${Formatters.date(this.#fecha)}`;
+      }
       this.#renderProductos();
     } catch {
-      if (statusEl) statusEl.textContent = 'Sin disponibilidad para esta fecha';
+      if (statusEl) {
+        statusEl.className = 'cal__status';
+        statusEl.textContent = 'Sin disponibilidad para esta fecha';
+      }
       productsEl.innerHTML = `<div style="text-align:center;padding:40px;color:var(--color-error)">Sin disponibilidad para la fecha seleccionada</div>`;
     }
   }
@@ -145,7 +265,7 @@ export class CompraStep1View {
 
     const sorted = [...this.#productos].sort((a, b) => a.ordenTarifa - b.ordenTarifa);
     container.innerHTML = sorted.map(p => {
-      const qty = this.#cantidades[p.productoId] || 0;
+      const qty    = this.#cantidades[p.productoId] || 0;
       const isFree = p.pvpInternet === 0;
       return `
         <div class="product-card" data-pid="${p.productoId}">
@@ -175,16 +295,16 @@ export class CompraStep1View {
   #bindQtyEvents() {
     this.#el.querySelectorAll('.js-qty-minus, .js-qty-plus').forEach(btn => {
       btn.addEventListener('click', () => {
-        const pid = btn.dataset.pid;
+        const pid     = btn.dataset.pid;
         const producto = this.#productos.find(p => p.productoId === pid);
         if (!producto) return;
         const current = this.#cantidades[pid] || 0;
-        const delta = btn.classList.contains('js-qty-plus') ? 1 : -1;
-        const next = Math.max(0, Math.min(producto.maximoTarifa, current + delta));
+        const delta   = btn.classList.contains('js-qty-plus') ? 1 : -1;
+        const next    = Math.max(0, Math.min(producto.maximoTarifa, current + delta));
         this.#cantidades[pid] = next;
         this.#el.querySelector(`.js-qty-val-${pid}`).textContent = next;
         btn.closest('.qty-selector').querySelector('.js-qty-minus').disabled = next === 0;
-        btn.closest('.qty-selector').querySelector('.js-qty-plus').disabled = next >= producto.maximoTarifa;
+        btn.closest('.qty-selector').querySelector('.js-qty-plus').disabled  = next >= producto.maximoTarifa;
         this.#updateSidebar();
       });
     });
@@ -197,8 +317,8 @@ export class CompraStep1View {
 
     const total = selectedItems.reduce((acc, p) => acc + p.pvpInternet * p.cantidad, 0);
 
-    const resumenEl = this.#el.querySelector('.js-resumen-body');
-    const totalEl   = this.#el.querySelector('.js-total');
+    const resumenEl    = this.#el.querySelector('.js-resumen-body');
+    const totalEl      = this.#el.querySelector('.js-total');
     const siguienteBtn = this.#el.querySelector('.js-siguiente');
 
     if (resumenEl) {

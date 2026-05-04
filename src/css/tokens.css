@@ -55,8 +55,16 @@
   --sidebar-hover-bg:  var(--gray-600);
 
   /* === TIPOGRAFÍA === */
-  --font-display: 'Playfair Display', Georgia, serif;
-  --font-body:    'Inter', system-ui, sans-serif;
+  --font-display: 'DM Sans', system-ui, sans-serif;
+  --font-body:    'DM Sans', system-ui, sans-serif;
+
+  /* Pesos tipográficos */
+  --fw-light:      300;
+  --fw-regular:    400;
+  --fw-medium:     500;
+  --fw-semibold:   600;
+  --fw-bold:       700;
+  --fw-extrabold:  800;
 
   --text-xs:   9px;
   --text-sm:   11px;

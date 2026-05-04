@@ -89,13 +89,13 @@ export class App {
 
     const titleMap = {
       dashboard:    'Dashboard',
-      reservas:     'Reservas',
-      nuevaReserva: 'Nueva Reserva',
-      detalle:      'Detalle de Reserva',
-      compra0:      'Nueva Reserva',
-      compra1:      'Nueva Reserva',
-      compra2:      'Nueva Reserva',
-      compra3:      'Nueva Reserva',
+      reservas:     'Tickets',
+      nuevaReserva: 'Nueva Venta',
+      detalle:      'Detalle del Ticket',
+      compra0:      'Nueva Venta',
+      compra1:      'Nueva Venta',
+      compra2:      'Nueva Venta',
+      compra3:      'Nueva Venta',
     };
     this.#shell.setTopbarTitle(titleMap[viewId] || viewId);
 
@@ -129,7 +129,7 @@ export class App {
     });
     slot.appendChild(this.#reservasView.getElement());
 
-    this.#spinner.show('Cargando reservas...');
+    this.#spinner.show('Cargando tickets...');
     try {
       const reservas = await this.#api.getReservas();
       this.#reservasView.setReservas(reservas);
@@ -141,7 +141,7 @@ export class App {
   // ── DETALLE RESERVA ───────────────────────────────────────────────────────
 
   async #handleVerDetalle(localizador) {
-    this.#spinner.show('Consultando reserva...');
+    this.#spinner.show('Consultando ticket...');
     try {
       const reserva = await this.#api.traerReservaEstado(localizador);
       this.#state.set('selectedReserva', reserva);
@@ -163,16 +163,16 @@ export class App {
 
   async #handleAnular(localizador) {
     const confirmed = await this.#modal.confirm({
-      title:          'Anular reserva',
-      body:           `<p>¿Confirmas la anulación de la reserva <strong>${localizador}</strong>?</p>
+      title:          'Anular ticket',
+      body:           `<p>¿Confirmas la anulación del ticket <strong>${localizador}</strong>?</p>
                        <p style="margin-top:8px">Esta acción libera el aforo y no puede deshacerse.</p>`,
-      confirmLabel:   'Sí, anular reserva',
+      confirmLabel:   'Sí, anular ticket',
       confirmVariant: 'btn--danger',
     });
 
     if (!confirmed) return;
 
-    this.#spinner.show('Anulando reserva...');
+    this.#spinner.show('Anulando ticket...');
     try {
       await this.#api.anularVentaReserva(localizador);
       const reserva = this.#state.get('selectedReserva');
@@ -217,7 +217,7 @@ export class App {
 
   #mountCompra2(slot) {
     this.#step2View = new CompraStep2View({
-      onConfirmar: cart => this.#handleConfirmarCompra(cart),
+      onConfirmar: (cart, clienteDatos) => this.#handleConfirmarCompra(cart, clienteDatos),
       onVolver:    ()   => this.#navigateTo('compra1'),
     });
     this.#step2View.setCart(this.#state.get('cart'));
@@ -226,12 +226,12 @@ export class App {
 
   // ── COMPRA: PASO 3 ────────────────────────────────────────────────────────
 
-  async #handleConfirmarCompra(cart) {
+  async #handleConfirmarCompra(cart, clienteDatos) {
     this.#spinner.show('Reservando aforo...');
     try {
       await this.#api.reservaAforo({ sesionId: '77543', cantidad: cart.productos.reduce((a,p) => a + p.cantidad, 0) });
 
-      this.#spinner.show('Emitiendo reserva...');
+      this.#spinner.show('Emitiendo ticket...');
       const importeTotal = cart.productos.reduce((acc, p) => acc + p.pvpInternet * p.cantidad, 0);
       const result = await this.#api.insercion({
         fecha:        cart.fecha,
@@ -247,6 +247,7 @@ export class App {
         parque:       cart.parque,
         productos:    cart.productos,
         importeTotal,
+        clienteDatos,
       };
       this.#state.set('lastPurchase', purchase);
       this.#state.resetCart();

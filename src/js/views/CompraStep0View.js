@@ -48,8 +48,8 @@ export class CompraStep0View {
     return `
       <div class="page-header" style="margin-top:8px">
         <div>
-          <h2 class="page-header__title">Nueva Reserva</h2>
-          <p class="page-header__subtitle">Selecciona el parque para el que deseas hacer la reserva</p>
+          <h2 class="page-header__title">Nueva Venta</h2>
+          <p class="page-header__subtitle">Selecciona el parque para emitir los tickets</p>
         </div>
         <button class="btn btn--ghost js-volver">${Icons.arrowLeft} Cancelar</button>
       </div>

@@ -19,15 +19,15 @@ html, body {
 
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-display);
-  font-weight: 400;
-  line-height: 1.2;
+  line-height: 1.15;
   color: var(--foreground);
+  letter-spacing: -0.02em;
 }
 
-h1 { font-size: var(--text-4xl); }
-h2 { font-size: var(--text-3xl); }
-h3 { font-size: var(--text-2xl); }
-h4 { font-size: var(--text-xl); }
+h1 { font-size: var(--text-4xl); font-weight: var(--fw-extrabold); }
+h2 { font-size: var(--text-3xl); font-weight: var(--fw-bold); }
+h3 { font-size: var(--text-2xl); font-weight: var(--fw-semibold); }
+h4 { font-size: var(--text-xl);  font-weight: var(--fw-semibold); }
 
 p { line-height: 1.6; }
 
