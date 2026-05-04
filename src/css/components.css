@@ -818,3 +818,35 @@
   width: 20px;
   height: 20px;
 }
+
+/* ============================================================
+   RESPONSIVE components — Mobile ≤ 640px
+   ============================================================ */
+@media (max-width: 640px) {
+  /* Product card: stack precio y selector */
+  .product-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3);
+  }
+  .product-card > div:last-child {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  /* Localizador más pequeño */
+  .localizador-box__code { font-size: 22px; letter-spacing: 2px; }
+
+  /* Ocultar columnas menos críticas en tabla de tickets */
+  .data-table .col-productos { display: none; }
+
+  /* Botones full en modal footer */
+  .modal__footer { flex-direction: column; }
+  .modal__footer .btn { width: 100%; justify-content: center; }
+
+  /* Alert: padding reducido */
+  .alert { padding: var(--space-4); }
+
+  /* Summary row: más compacto */
+  .summary-row { padding: var(--space-3) 0; }
+}

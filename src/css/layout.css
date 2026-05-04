@@ -599,3 +599,137 @@
 }
 
 .confirmation-icon svg { width: 28px; height: 28px; }
+
+/* === TOPBAR LEFT === */
+.topbar__left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.topbar__menu-btn { display: none; }
+
+/* === SIDEBAR BACKDROP (mobile) === */
+.sidebar-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 99;
+}
+
+.sidebar-backdrop--visible { display: block; }
+
+/* ============================================================
+   RESPONSIVE — Tablet ≤ 1024px
+   ============================================================ */
+@media (max-width: 1024px) {
+  .page-content { padding: 24px 24px 40px; }
+
+  .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+
+  .compra-layout { grid-template-columns: 1fr 280px; gap: var(--space-5); }
+
+  .detalle-grid { grid-template-columns: 1fr; }
+
+  .detalle-fields-grid { grid-template-columns: 1fr 1fr; }
+
+  .confirmation-layout { margin-left: 0; margin-right: 0; max-width: 100%; }
+
+  .table-toolbar { flex-wrap: wrap; }
+  .table-toolbar__right { flex-wrap: wrap; }
+}
+
+/* ============================================================
+   RESPONSIVE — Mobile ≤ 640px
+   ============================================================ */
+@media (max-width: 640px) {
+  /* Login */
+  .login-view { padding: var(--space-4); align-items: stretch; }
+  .login-card { width: 100%; }
+  .login-card__header { padding: var(--space-8) var(--space-6) var(--space-6); }
+  .login-card__body { padding: var(--space-6); }
+
+  /* Sidebar: overlay deslizante */
+  .sidebar {
+    position: fixed;
+    left: 0; top: 0; bottom: 0;
+    width: var(--sidebar-width) !important;
+    transform: translateX(-100%);
+    z-index: 100;
+    transition: transform 250ms ease;
+  }
+  .sidebar--open { transform: translateX(0); }
+
+  /* Restaurar labels dentro del overlay */
+  .sidebar .sidebar__header-text,
+  .sidebar .sidebar__user-info {
+    opacity: 1 !important;
+    width: auto !important;
+    pointer-events: auto !important;
+  }
+  .sidebar .sidebar__logo,
+  .sidebar .sidebar__tagline,
+  .sidebar .sidebar__user-name,
+  .sidebar .sidebar__user-role { white-space: nowrap; }
+  .sidebar .nav-item { justify-content: flex-start !important; padding: 0 var(--space-4) !important; }
+  .sidebar .nav-item__label { opacity: 1 !important; width: auto !important; pointer-events: auto !important; }
+  .sidebar .sidebar__footer { justify-content: flex-start !important; padding: var(--space-4) var(--space-5) !important; }
+  .sidebar .sidebar__toggle { display: none; }
+
+  /* Topbar */
+  .topbar { padding: 0 var(--space-4); }
+  .topbar__menu-btn { display: flex !important; }
+
+  /* Page content */
+  .page-content { padding: 16px 16px 48px; }
+
+  /* Page header */
+  .page-header { flex-direction: column; gap: var(--space-3); margin-bottom: var(--space-5); }
+  .page-header__title { font-size: 20px; }
+  .page-header__actions { width: 100%; }
+  .page-header__actions .btn { flex: 1; justify-content: center; }
+
+  /* KPI */
+  .kpi-grid { grid-template-columns: repeat(2, 1fr); gap: var(--space-3); }
+  .kpi-card { padding: var(--space-4); }
+  .kpi-card__value { font-size: 26px; }
+
+  /* Compra: una columna, resumen abajo */
+  .compra-layout { grid-template-columns: 1fr; gap: var(--space-4); }
+  .compra-sidebar-card { position: static; }
+
+  /* Detalle */
+  .detalle-grid { grid-template-columns: 1fr; }
+  .detalle-fields-grid { grid-template-columns: 1fr; }
+
+  /* Steps: ocultar labels */
+  .step__label { display: none; }
+  .step__connector { width: 24px; }
+
+  /* Table: scroll horizontal */
+  .table-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .data-table { min-width: 560px; }
+
+  /* Toolbar */
+  .table-toolbar { flex-direction: column; align-items: stretch; gap: var(--space-3); }
+  .table-toolbar__right { flex-direction: column; gap: var(--space-2); }
+  .search-bar { width: 100%; }
+  .filter-pills { flex-wrap: wrap; }
+
+  /* Park selector */
+  .park-selector { max-width: 100%; }
+  .park-selector-card { padding: var(--space-4); gap: var(--space-3); }
+  .park-selector-card__logo-wrap { width: 72px; height: 44px; }
+  .park-selector-card__name { font-size: var(--text-lg); }
+
+  /* Confirmation */
+  .confirmation-layout { margin-top: var(--space-4); max-width: 100%; }
+
+  /* Modal */
+  .modal-backdrop { padding: var(--space-4); align-items: flex-end; }
+  .modal { max-width: 100%; }
+
+  /* Calendar: días más grandes al tacto */
+  .cal__day { min-height: 36px; font-size: 14px; }
+}

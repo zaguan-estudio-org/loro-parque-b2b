@@ -54,9 +54,16 @@ export class PanelShell {
         </div>
       </aside>
 
+      <div class="sidebar-backdrop js-sidebar-backdrop"></div>
+
       <div class="main-content">
         <header class="topbar">
-          <h1 class="topbar__title js-topbar-title">Dashboard</h1>
+          <div class="topbar__left">
+            <button class="topbar__icon-btn topbar__menu-btn js-menu-btn" aria-label="Abrir menú">
+              ${Icons.menu}
+            </button>
+            <h1 class="topbar__title js-topbar-title">Dashboard</h1>
+          </div>
           <div class="topbar__actions">
             <button class="topbar__icon-btn" aria-label="Notificaciones">
               ${Icons.bell}
@@ -78,6 +85,25 @@ export class PanelShell {
 
     this.#el.querySelector('.js-sidebar-toggle').addEventListener('click', () => {
       this.#el.querySelector('.sidebar').classList.toggle('sidebar--collapsed');
+    });
+
+    const sidebar  = this.#el.querySelector('.sidebar');
+    const backdrop = this.#el.querySelector('.js-sidebar-backdrop');
+
+    const openMobileSidebar = () => {
+      sidebar.classList.add('sidebar--open');
+      backdrop.classList.add('sidebar-backdrop--visible');
+    };
+    const closeMobileSidebar = () => {
+      sidebar.classList.remove('sidebar--open');
+      backdrop.classList.remove('sidebar-backdrop--visible');
+    };
+
+    this.#el.querySelector('.js-menu-btn').addEventListener('click', openMobileSidebar);
+    backdrop.addEventListener('click', closeMobileSidebar);
+
+    this.#el.querySelectorAll('.nav-item').forEach(btn => {
+      btn.addEventListener('click', closeMobileSidebar);
     });
   }
 

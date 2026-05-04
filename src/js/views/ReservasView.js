@@ -87,7 +87,7 @@ export class ReservasView {
               <th style="width:140px">Localizador</th>
               <th style="width:120px">Fecha visita</th>
               <th style="width:130px">Parque</th>
-              <th>Productos</th>
+              <th class="col-productos">Productos</th>
               <th style="width:110px;text-align:right">Importe</th>
               <th style="width:120px">Estado</th>
               <th style="width:60px"></th>
@@ -171,7 +171,7 @@ export class ReservasView {
           </td>
           <td>${Formatters.date(r.fecha)}</td>
           <td>${r.parque}</td>
-          <td style="color:var(--muted-foreground)">${productos}</td>
+          <td class="col-productos" style="color:var(--muted-foreground)">${productos}</td>
           <td style="text-align:right;font-weight:600">${Formatters.currency(r.importeTotal)}</td>
           <td><span class="badge ${estado.cls}">${estado.label}</span></td>
           <td>
