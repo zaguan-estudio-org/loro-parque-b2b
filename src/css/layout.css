@@ -53,6 +53,16 @@
   text-transform: uppercase;
 }
 
+.login-card__logo-img {
+  max-height: 68px;
+  max-width: 260px;
+  width: auto;
+  display: block;
+  object-fit: contain;
+  /* Ensure white logo is visible on gold background */
+  filter: brightness(0) invert(1);
+}
+
 .login-card__tagline {
   font-size: var(--text-sm);
   color: var(--gold-60);

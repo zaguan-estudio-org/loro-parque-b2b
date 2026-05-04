@@ -19,7 +19,7 @@ export class LoginView {
     return `
       <div class="login-card">
         <div class="login-card__header">
-          <div class="login-card__logo">BAHÍA DEL DUQUE</div>
+          <img src="src/assets/bahia-logo.png" alt="Bahía del Duque" class="login-card__logo-img" />
           <div class="login-card__tagline">Portal B2B · Acceso de agencias</div>
         </div>
         <div class="login-card__body">
