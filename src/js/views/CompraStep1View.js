@@ -10,6 +10,8 @@ const MONTH_NAMES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio',
 
 const WEEK_DAYS = ['Lu','Ma','Mi','Ju','Vi','Sa','Do'];
 
+const DAY_NAMES_LONG = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+
 const STEP_INDICATOR = `
   <div class="steps">
     <div class="step step--active">
@@ -41,6 +43,7 @@ export class CompraStep1View {
   #fecha = Formatters.tomorrowISO();
   #calYear;
   #calMonth;
+  #dropdownOpen = false;
 
   constructor({ api, spinner, parque, onSiguiente, onVolver }) {
     this.#api         = api;
@@ -58,6 +61,15 @@ export class CompraStep1View {
     this.#renderCalendar();
     this.#bindStaticEvents();
     this.#loadProductos();
+  }
+
+  #formatDateLong(isoDate) {
+    const d = new Date(isoDate + 'T00:00:00');
+    const dayName = DAY_NAMES_LONG[d.getDay()];
+    const day     = d.getDate();
+    const month   = MONTH_NAMES[d.getMonth()].toLowerCase();
+    const year    = d.getFullYear();
+    return `${dayName.charAt(0).toUpperCase() + dayName.slice(1)}, ${day} de ${month} de ${year}`;
   }
 
   #skeleton() {
@@ -79,20 +91,29 @@ export class CompraStep1View {
       <div class="compra-layout">
         <div style="display:flex;flex-direction:column;gap:var(--space-5)">
 
-          <div class="cal">
-            <div class="cal__header">
-              <button class="cal__nav js-cal-prev" aria-label="Mes anterior">
-                ${Icons.arrowLeft}
-              </button>
-              <span class="cal__month-label js-cal-label"></span>
-              <button class="cal__nav js-cal-next" aria-label="Mes siguiente">
-                ${Icons.arrowRight}
-              </button>
+          <div class="date-picker js-date-picker">
+            <label class="field__label">Fecha de visita</label>
+            <button class="date-picker__trigger js-dp-trigger" type="button">
+              <span class="date-picker__trigger-icon">${Icons.calendar}</span>
+              <span class="date-picker__display js-dp-display">${this.#formatDateLong(this.#fecha)}</span>
+              <span class="date-picker__chevron js-dp-chevron">${Icons.chevronDown}</span>
+            </button>
+            <div class="date-picker__dropdown js-dp-dropdown">
+              <div class="cal__header">
+                <button class="cal__nav js-cal-prev" type="button" aria-label="Mes anterior">
+                  ${Icons.arrowLeft}
+                </button>
+                <span class="cal__month-label js-cal-label"></span>
+                <button class="cal__nav js-cal-next" type="button" aria-label="Mes siguiente">
+                  ${Icons.arrowRight}
+                </button>
+              </div>
+              <div class="cal__weekdays">${weekdaysHtml}</div>
+              <div class="cal__grid js-cal-grid"></div>
             </div>
-            <div class="cal__weekdays">${weekdaysHtml}</div>
-            <div class="cal__grid js-cal-grid"></div>
-            <div class="cal__status js-fecha-status"></div>
           </div>
+
+          <div class="cal__status js-fecha-status"></div>
 
           <div class="compra-products js-products">
             <div style="text-align:center;padding:40px;color:var(--muted-foreground)">
@@ -136,7 +157,7 @@ export class CompraStep1View {
     const firstOfMonth = new Date(year, month, 1);
     const lastOfMonth  = new Date(year, month + 1, 0);
 
-    // Monday-based offset (getDay: 0=Sun → put at end)
+    // Monday-based offset
     let startOffset = firstOfMonth.getDay();
     startOffset = startOffset === 0 ? 6 : startOffset - 1;
 
@@ -167,9 +188,9 @@ export class CompraStep1View {
     // Current month days
     for (let d = 1; d <= lastOfMonth.getDate(); d++) {
       const date = new Date(year, month, d);
-      const isDisabled   = date < tomorrow;
-      const isToday      = date.getTime() === today.getTime();
-      const isSelected   = date.getTime() === selectedDate.getTime();
+      const isDisabled = date < tomorrow;
+      const isToday    = date.getTime() === today.getTime();
+      const isSelected = date.getTime() === selectedDate.getTime();
       const iso = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
 
       const classes = [
@@ -179,10 +200,10 @@ export class CompraStep1View {
         isDisabled ? 'cal__day--disabled' : '',
       ].filter(Boolean).join(' ');
 
-      html += `<button class="${classes}" data-date="${iso}" ${isDisabled ? 'disabled' : ''}>${d}</button>`;
+      html += `<button class="${classes}" data-date="${iso}" type="button" ${isDisabled ? 'disabled' : ''}>${d}</button>`;
     }
 
-    // Trailing days from next month to complete last row
+    // Trailing days
     const totalCells   = startOffset + lastOfMonth.getDate();
     const trailingDays = (7 - (totalCells % 7)) % 7;
     for (let d = 1; d <= trailingDays; d++) {
@@ -196,9 +217,36 @@ export class CompraStep1View {
       btn.addEventListener('click', () => {
         this.#fecha = btn.dataset.date;
         this.#renderCalendar();
+        this.#updateTriggerDisplay();
+        this.#closeDropdown();
         this.#loadProductos();
       });
     });
+  }
+
+  #updateTriggerDisplay() {
+    const display = this.#el.querySelector('.js-dp-display');
+    if (display) display.textContent = this.#formatDateLong(this.#fecha);
+  }
+
+  #openDropdown() {
+    this.#dropdownOpen = true;
+    const dropdown = this.#el.querySelector('.js-dp-dropdown');
+    const chevron  = this.#el.querySelector('.js-dp-chevron');
+    const trigger  = this.#el.querySelector('.js-dp-trigger');
+    dropdown?.classList.add('date-picker__dropdown--open');
+    chevron?.classList.add('date-picker__chevron--open');
+    trigger?.classList.add('date-picker__trigger--open');
+  }
+
+  #closeDropdown() {
+    this.#dropdownOpen = false;
+    const dropdown = this.#el.querySelector('.js-dp-dropdown');
+    const chevron  = this.#el.querySelector('.js-dp-chevron');
+    const trigger  = this.#el.querySelector('.js-dp-trigger');
+    dropdown?.classList.remove('date-picker__dropdown--open');
+    chevron?.classList.remove('date-picker__chevron--open');
+    trigger?.classList.remove('date-picker__trigger--open');
   }
 
   #bindStaticEvents() {
@@ -210,6 +258,12 @@ export class CompraStep1View {
       }
     });
 
+    // Dropdown toggle
+    this.#el.querySelector('.js-dp-trigger')?.addEventListener('click', () => {
+      this.#dropdownOpen ? this.#closeDropdown() : this.#openDropdown();
+    });
+
+    // Nav buttons
     this.#el.querySelector('.js-cal-prev')?.addEventListener('click', () => {
       if (this.#calMonth === 0) { this.#calMonth = 11; this.#calYear--; }
       else { this.#calMonth--; }
@@ -221,10 +275,18 @@ export class CompraStep1View {
       else { this.#calMonth++; }
       this.#renderCalendar();
     });
+
+    // Cerrar al hacer clic fuera
+    document.addEventListener('click', e => {
+      const picker = this.#el.querySelector('.js-date-picker');
+      if (picker && !picker.contains(e.target)) {
+        this.#closeDropdown();
+      }
+    });
   }
 
   async #loadProductos() {
-    const statusEl  = this.#el.querySelector('.js-fecha-status');
+    const statusEl   = this.#el.querySelector('.js-fecha-status');
     const productsEl = this.#el.querySelector('.js-products');
     if (!productsEl) return;
 
@@ -246,7 +308,6 @@ export class CompraStep1View {
       Object.keys(this.#cantidades).forEach(k => { if (!ids.has(k)) delete this.#cantidades[k]; });
       if (statusEl) {
         statusEl.className = 'cal__status cal__status--ok';
-        const d = new Date(this.#fecha + 'T00:00:00');
         statusEl.textContent = `✓ Disponible · ${Formatters.date(this.#fecha)}`;
       }
       this.#renderProductos();
@@ -295,7 +356,7 @@ export class CompraStep1View {
   #bindQtyEvents() {
     this.#el.querySelectorAll('.js-qty-minus, .js-qty-plus').forEach(btn => {
       btn.addEventListener('click', () => {
-        const pid     = btn.dataset.pid;
+        const pid      = btn.dataset.pid;
         const producto = this.#productos.find(p => p.productoId === pid);
         if (!producto) return;
         const current = this.#cantidades[pid] || 0;

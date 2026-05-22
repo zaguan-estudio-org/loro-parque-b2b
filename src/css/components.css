@@ -552,10 +552,84 @@
 
 .search-bar input::placeholder { color: var(--muted-foreground); }
 
-/* === VISUAL CALENDAR === */
-.cal {
+/* === DATE PICKER DROPDOWN === */
+.date-picker {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.date-picker__trigger {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 0 14px;
+  height: 44px;
   background: var(--card);
   border: 1px solid var(--border);
+  color: var(--foreground);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: var(--fw-medium);
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+
+.date-picker__trigger:hover,
+.date-picker__trigger--open {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 12%, transparent);
+}
+
+.date-picker__trigger-icon svg {
+  width: 16px;
+  height: 16px;
+  color: var(--muted-foreground);
+  flex-shrink: 0;
+}
+
+.date-picker__display {
+  flex: 1;
+}
+
+.date-picker__chevron svg {
+  width: 16px;
+  height: 16px;
+  color: var(--muted-foreground);
+  flex-shrink: 0;
+  transition: transform 200ms ease;
+}
+
+.date-picker__chevron--open svg {
+  transform: rotate(180deg);
+}
+
+.date-picker__dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 50;
+  background: var(--card);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-lg);
+  opacity: 0;
+  transform: translateY(-6px);
+  pointer-events: none;
+  transition: opacity 160ms ease, transform 160ms ease;
+  min-width: 300px;
+}
+
+.date-picker__dropdown--open {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* === CALENDAR (inside dropdown) === */
+.cal {
   padding: var(--space-5) var(--space-6) var(--space-6);
   user-select: none;
 }
